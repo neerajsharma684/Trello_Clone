@@ -21,7 +21,7 @@ const Header = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button onClick={(e) => setSearch('')} className='hover: cursor-pointer'><IoClose className=" text-gray-700" /></button>
+        <button onClick={() => setSearch('')} className='hover: cursor-pointer'><IoClose className=" text-gray-700" /></button>
         
       </div>
       <div>Welcome, {user}</div>
