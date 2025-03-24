@@ -2,12 +2,14 @@ import trello from '../assets/trello.png';
 import { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { IoClose } from "react-icons/io5";
-
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 const Header = () => {
   const [search, setSearch] = useState('');
-  const user = 'User';
+  const user = useSelector((state: RootState) => state.user.user?.Name);
+  console.log(user)
   return (
-    <div className="flex justify-between items-center bg-blue-600 text-white p-4 shadow-md">
+    <div className="flex justify-between items-center bg-blue-400 text-white p-2 shadow-md">
       <div className="flex items-center gap-3 self-baseline" aria-label="Trello Clone">
         <img src={trello} alt="Trello Logo" className="w-20 h-20" />
         <span className="text-xl font-bold">Trello Clone</span>

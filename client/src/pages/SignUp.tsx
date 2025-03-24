@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEnvelope, FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Loader } from "../components";
+import { signUp } from "../services/Auth";
 
 const SignUp = () => {
     const [name, setName] = useState('');
@@ -12,14 +13,30 @@ const SignUp = () => {
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (password !== repeatPassword) {
             alert("Passwords do not match");
             return;
         }
+        else if (password.length < 8) {
+            alert("Password must be at least 8 characters long");
+            return;
+        }
         setSubmitting(true);
-        alert(`Email: ${    email}\nPassword: ${password}`);
+        try{
+            const res = await signUp(name, email, password);
+            if(res.status === 200){
+                alert("SignUp successful");
+                navigate("/login");
+            }
+            else{
+                alert("SignUp failed");
+                setSubmitting(false);
+            }
+        }catch(err){
+            console.error(err);
+        }
     }
 
     return (
@@ -114,7 +131,7 @@ const SignUp = () => {
                 </div>
 
                 <button className="w-full h-10 mt-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200" type="submit">
-                    Login
+                    SignUp
                 </button>
 
                 <div className="mt-4 text-center text-sm">
@@ -123,7 +140,7 @@ const SignUp = () => {
                         className="text-gray-600 hover:text-blue-600"
                         onClick={(e) => {
                             e.preventDefault();
-                            navigate("/signup");
+                            navigate("/login");
                         }}
                     >
                         Already have an account? <span className="font-semibold text-blue-400">Login</span>

@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Loader } from "../components";
+import { login } from "../services/Auth";
+import { useDispatch } from "react-redux";
+import {loginStart, loginSuccess} from "../redux/slices/authSlice";
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -9,11 +12,25 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
-        alert(`Email: ${    email}\nPassword: ${password}`);
+        dispatch(loginStart());
+        try{
+            const res = await login(email, password);
+            dispatch(loginSuccess({
+                user: res.data.user,
+                token: res.data.token
+            }));
+            localStorage.setItem('token', res.data.token);
+            setSubmitting(false);
+            navigate('/');
+        }catch(err){
+            console.error(err);
+            setSubmitting(false);
+        }
     }
 
     return (

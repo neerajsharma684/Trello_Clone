@@ -4,9 +4,8 @@ const bcrypt = require('bcryptjs');
 const generateToken = require('../utils/generateToken');
 
 const registerUser = async (req, res) => {
-    const { name, email, password } = req.body;
-    
-    const userExists = await User.findOne({ email });
+    const { Name, Email, Password } = req.body;
+    const userExists = await User.findOne({ Email });
     
     if(userExists){
         res.status(400);
@@ -14,16 +13,16 @@ const registerUser = async (req, res) => {
     }
     
     const user = await User.create({
-        name,
-        email,
-        password
+        Name,
+        Email,
+        Password
     });
 
     if(user){
-        res.status(201).json({
+        res.status(200).json({
             _id: user._id,
-            name: user.name,
-            email: user.email,
+            Name: user.Name,
+            Email: user.Email,
             token: generateToken(user._id)
         });
     }
@@ -35,15 +34,14 @@ const registerUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
-    
-    const user = await User.findOne({ email });
+    const { Email, Password } = req.body;
+    const user = await User.findOne({ Email });
 
-    if(user && (await bcrypt.compare(password, user.password))){
+    if(user && (await bcrypt.compare(Password, user.Password))){
         res.json({
             _id: user._id,
-            name: user.name,
-            email: user.email,
+            Name: user.Name,
+            Email: user.Email,
             token: generateToken(user._id)
         });
     }
