@@ -48,7 +48,7 @@ const deleteTask = async (req, res) => {
         throw new Error('Task not found');
     }
 
-    if (task.user.toString() !== req.user.id){
+    if (task._id.toString() !== req.params.id){
         res.status(401);
         throw new Error('Not authorized to delete this task');
     }

@@ -24,6 +24,7 @@ export const addTask = async (formData: any) => {
 };
 
 export const deleteTask = async (id: string) => {
+  console.log(id);
   const res = await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
     headers: {
         Authorization: `Bearer ${getToken()}`,

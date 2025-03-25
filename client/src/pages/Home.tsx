@@ -63,7 +63,7 @@ const Home = () => {
   return (
     <>
       {createTaskModalOpen && <AddTask />}
-      <div className="bg-gray-400 h-screen mx-auto">
+      <div className="bg-gray-200 h-screen mx-auto">
         <Header />
         <div className="p-4 flex flex-col gap-2 md:m-2 md:mx-5 mx-2 rounded-lg justify-center items-center mb-5 bg-white/55">
           <h2 className="font-bold text-2xl text-gray-800">My Task Board</h2>
@@ -95,7 +95,7 @@ const Home = () => {
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                             >
-                              <TaskCard task={{title: task.Title, description: task.Description, dueDate: task.DueDate, priority: task.Priority}} />
+                              <TaskCard task={{_id: task._id, title: task.Title, description: task.Description, dueDate: task.DueDate, priority: task.Priority}} />
                             </div>
                           )}
                         </Draggable>

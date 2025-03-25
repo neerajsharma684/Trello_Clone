@@ -1,5 +1,8 @@
+import { deleteTask } from "../services/Task";
+import { FaTrash } from "react-icons/fa";
 
 interface Task {
+    _id: string;
     title: string;
     description: string;
     dueDate: string;
@@ -29,6 +32,16 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
         return "text-gray-500";
     }
   };
+
+  const handleDelete = async () => {
+    try {
+      await deleteTask(task._id);
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    } 
+  }
+
     return (
       <div className="bg-white p-4 rounded-lg shadow-lg mb-4 transition-all hover:shadow-xl">
       <h3 className="text-lg font-semibold text-gray-800">{task.title}</h3>
@@ -41,6 +54,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
           Priority: {task.priority}
         </p>
       </div>
+      <button onClick={handleDelete} className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+      <FaTrash />
+    </button>
     </div>
     );
   };
