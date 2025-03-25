@@ -4,10 +4,16 @@ import { FaSearch } from 'react-icons/fa';
 import { IoClose } from "react-icons/io5";
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import Loader from './Loader';
+
 const Header = () => {
   const [search, setSearch] = useState('');
-  const user = useSelector((state: RootState) => state.user.user?.Name);
-  console.log(user)
+  const { user, loading } = useSelector((state: RootState) => state.user);
+
+  if (loading) {
+    return <Loader />; // Show loading state until the user data is fetched from persisted state
+  }
+
   return (
     <div className="flex justify-between items-center bg-blue-400 text-white p-2 shadow-md">
       <div className="flex items-center gap-3 self-baseline" aria-label="Trello Clone">
@@ -23,10 +29,11 @@ const Header = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button onClick={() => setSearch('')} className='hover: cursor-pointer'><IoClose className=" text-gray-700" /></button>
-        
+        <button onClick={() => setSearch('')} className='hover: cursor-pointer'>
+          <IoClose className=" text-gray-700" />
+        </button>
       </div>
-      <div>Welcome, {user}</div>
+      <div>Welcome, {user ? user.Name : 'Guest'}</div>
     </div>
   );
 }

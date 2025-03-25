@@ -20,8 +20,9 @@ const Login = () => {
         dispatch(loginStart());
         try{
             const res = await login(email, password);
+            console.log(res.data);
             dispatch(loginSuccess({
-                user: res.data.user,
+                user: res.data,
                 token: res.data.token
             }));
             localStorage.setItem('token', res.data.token);

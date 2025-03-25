@@ -23,13 +23,10 @@ const userSlice = createSlice({
       state.error = null;
     },
     loginSuccess: (state, action: PayloadAction<{ user: { _id: string; Name: string; Email: string }; token: string }>) => {
-      if (state.user) {
-        state.user.Name = action.payload.user.Name;
-        state.user.Email = action.payload.user.Email;
-      }
+      state.user = action.payload.user;
       state.token = action.payload.token;
       state.loading = false;
-      console.log('Updated Redux state after loginSuccess:', state.user);
+      console.log('Updated Redux state after loginSuccess:', state.user?.Name);
     },
     loginFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
