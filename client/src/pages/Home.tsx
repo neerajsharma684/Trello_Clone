@@ -1,53 +1,42 @@
 import { Header, TaskCard, AddTask } from '../components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { getTasks } from '../services/Task';
 
 interface Task {
-  title: string;
-  description: string;
-  dueDate: string;
-  priority: string;
-  status: string;
+  _id: string;
+  Title: string;
+  Description: string;
+  Status: string;
+  DueDate: string;
+  Priority: string;
 }
 
 const Home = () => {
   const [createTaskModalOpen, setCreateTaskModalOpen] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      title: 'Finish React Project',
-      description: 'Complete the React app with state management and routing.',
-      dueDate: '2025-03-30T23:59:59Z',
-      priority: 'High',
-      status: 'To Do',
-    },
-    {
-      title: 'Bug Fixing in API',
-      description: 'Fix the bug in the API causing 500 errors.',
-      dueDate: '2025-03-25T23:59:59Z',
-      priority: 'Medium',
-      status: 'In Progress',
-    },
-    {
-      title: 'Write Unit Tests',
-      description: 'Write unit tests for the new features implemented in the app.',
-      dueDate: '2025-03-28T23:59:59Z',
-      priority: 'Low',
-      status: 'Completed',
-    },
-    {
-      title: 'Write Unit Tests again',
-      description: 'Write unit tests for the new features implemented in the app.',
-      dueDate: '2025-03-28T23:59:59Z',
-      priority: 'Low',
-      status: 'Completed',
-    },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  // Get tasks from Redux store
+  const loadTasks = async() => {
+    try {
+      const res = await getTasks();
+      setTasks(res.data);
+      console.log(res.data);
+    } catch (error) {
+      
+    }
+  }
+
+  // loadTasks();
+  useEffect(() => {
+    loadTasks();
+  }, []);
 
   const statuses = ['To Do', 'In Progress', 'Completed'];
 
   // Filter tasks by status
   const filterTasksByStatus = (status: string) => {
-    return tasks.filter((task) => task.status === status);
+    return tasks.filter((task) => task.Status === status);
   };
 
   // Handle Drag & Drop
@@ -63,7 +52,7 @@ const Home = () => {
     const [movedTask] = updatedTasks.splice(source.index, 1); // Remove task from source
 
     // Update task status if moved between columns
-    movedTask.status = destination.droppableId; // Use the droppableId directly
+    movedTask.Status = destination.droppableId; // Use the droppableId directly
 
     // Insert task at the new position in the destination column
     updatedTasks.splice(destination.index, 0, movedTask);
@@ -99,14 +88,14 @@ const Home = () => {
                     <h3 className="text-xl font-semibold text-gray-700 mb- 3">{status}</h3>
                     <div className="space-y-4">
                       {filterTasksByStatus(status).map((task, index) => (
-                        <Draggable key={task.title} draggableId={task.title} index={index}>
+                        <Draggable key={task.Title} draggableId={task.Title} index={index}>
                           {(provided) => (
                             <div
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                             >
-                              <TaskCard task={task} />
+                              <TaskCard task={{title: task.Title, description: task.Description, dueDate: task.DueDate, priority: task.Priority}} />
                             </div>
                           )}
                         </Draggable>

@@ -1,32 +1,41 @@
 import { useState } from "react";
+import { addTask } from "../services/Task";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
-// Define Task Interface
 interface Task {
   Title: string;
   Description: string;
   DueDate?: string;
   Priority: "Low" | "Medium" | "High";
   Status: "To Do" | "In Progress" | "Completed";
+  User: string | undefined;
 }
 
 const AddTask = () => {
-  // Form Data State
+  const userID = useSelector((state: RootState) => state.user.user?._id);
   const [formData, setFormData] = useState<Task>({
     Title: "",
     Description: "",
+    Status: "To Do",
     DueDate: "",
     Priority: "Low",
-    Status: "To Do",
+    User: userID,
   });
 
-  // Handle Form Submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add your task submission logic here
     console.log("Task added:", formData);
+    try {
+      const res = await addTask(formData);
+      console.log("Task added:", res);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error adding task:", error);
+      
+    }
   };
 
-  // Handle Form Field Changes
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -119,6 +128,7 @@ const AddTask = () => {
           <button
             type="button"
             className="bg-red-500 text-white p-3 w-full rounded-lg font-semibold hover:bg-red-600 transition"
+            onClick={() => window.location.reload()}
           >
             Close
           </button>

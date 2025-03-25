@@ -1,19 +1,20 @@
 const Task = require('../models/Task');
 
 const getTasks = async (req, res) => {
-    const tasks = await Task.find({ user: req.user.id });
+    const tasks = await Task.find({ User: req.user.id });
     res.status(200).json(tasks);
 };
 
 const createTask = async (req, res) => {
-    const { title, description, dueDate, priority } = req.body;
+    const { Title, Description, Status, DueDate, Priority, User } = req.body;
 
     const task = await Task.create({
-        title,
-        description,
-        dueDate,
-        priority,
-        user: req.user.id
+        Title,
+        Description,
+        Status,
+        DueDate,
+        Priority,
+        User
     });
 
     res.status(201).json(task);
