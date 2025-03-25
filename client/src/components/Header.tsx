@@ -1,14 +1,18 @@
 import trello from '../assets/trello.png';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
-import { IoClose } from "react-icons/io5";
-import { useSelector } from 'react-redux';
+import { IoClose, IoLogOutOutline } from "react-icons/io5";
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
+import { logout } from '../redux/slices/authSlice';
 import Loader from './Loader';
 
 const Header = () => {
   const [search, setSearch] = useState('');
   const { user, loading } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   if (loading) {
     return <Loader />; // Show loading state until the user data is fetched from persisted state
@@ -33,7 +37,11 @@ const Header = () => {
           <IoClose className=" text-gray-700" />
         </button>
       </div>
-      <div>Welcome, {user ? user.Name : 'Guest'}</div>
+      <div className='flex gap-4 justify-between items-center'>Welcome, {user ? user.Name : 'Guest'}
+      <button className="hover: cursor-pointer" onClick={() => {dispatch(logout())
+      navigate('/login')
+      }}><IoLogOutOutline className=" text-red-700 text-3xl"/></button>
+      </div>
     </div>
   );
 }

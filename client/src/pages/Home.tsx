@@ -1,8 +1,6 @@
 import { Header, TaskCard, AddTask } from '../components';
 import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
 
 interface Task {
   title: string;
