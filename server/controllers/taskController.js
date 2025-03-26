@@ -22,13 +22,15 @@ const createTask = async (req, res) => {
 
 const updateTask = async (req, res) => {
     const task = await Task.findById(req.params.id);
+    console.log(task);
+    console.log(req.user);
 
     if(!task){
         res.status(404);
         throw new Error('Task not found');
     }
 
-    if (task.user.toString() !== req.user.id){
+    if (task.User.toString() !== req.user.id){
         res.status(401);
         throw new Error('Not authorized to update this task');
     }

@@ -1,7 +1,7 @@
 import { Header, TaskCard, AddTask } from '../components';
 import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { getTasks } from '../services/Task';
+import { getTasks, updateTask } from '../services/Task';
 
 interface Task {
   _id: string;
@@ -16,48 +16,58 @@ const Home = () => {
   const [createTaskModalOpen, setCreateTaskModalOpen] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]);
 
-  // Get tasks from Redux store
-  const loadTasks = async() => {
+  const loadTasks = async () => {
     try {
       const res = await getTasks();
       setTasks(res.data);
-      console.log(res.data);
+      console.log('Tasks:', res.data);
     } catch (error) {
-      
+      console.error('Failed to load tasks:', error);
     }
-  }
+  };
 
-  // loadTasks();
   useEffect(() => {
     loadTasks();
   }, []);
 
   const statuses = ['To Do', 'In Progress', 'Completed'];
 
-  // Filter tasks by status
+  const handleDragEnd = async (result: any) => {
+  const { source, destination } = result;
+
+  if (!destination) return;
+
+  if (
+    source.droppableId === destination.droppableId &&
+    source.index === destination.index
+  ) {
+    return;
+  }
+
+  const newTasks = Array.from(tasks);
+
+  const [movedTask] = newTasks.splice(source.index, 1);
+
+  movedTask.Status = destination.droppableId;
+
+  try {
+    await updateTask(movedTask._id, { Status: movedTask.Status });
+    console.log('Task status updated successfully');
+  } catch (error) {
+    console.error('Failed to update task status:', error);
+  }
+
+  newTasks.splice(destination.index, 0, movedTask);
+
+  const sortedTasks = newTasks.sort(
+    (a, b) => new Date(a.DueDate).getTime() - new Date(b.DueDate).getTime()
+  );
+
+  setTasks(sortedTasks);
+};
+
   const filterTasksByStatus = (status: string) => {
     return tasks.filter((task) => task.Status === status);
-  };
-
-  // Handle Drag & Drop
-  const handleDragEnd = (result: any) => {
-    const { source, destination } = result;
-
-    // If task is dropped outside a valid droppable or dropped in the same place
-    if (!destination || (source.droppableId === destination.droppableId && source.index === destination.index)) {
-      return;
-    }
-
-    const updatedTasks = [...tasks];
-    const [movedTask] = updatedTasks.splice(source.index, 1); // Remove task from source
-
-    // Update task status if moved between columns
-    movedTask.Status = destination.droppableId; // Use the droppableId directly
-
-    // Insert task at the new position in the destination column
-    updatedTasks.splice(destination.index, 0, movedTask);
-
-    setTasks(updatedTasks);
   };
 
   return (
@@ -85,17 +95,29 @@ const Home = () => {
                     ref={provided.innerRef}
                     className="bg-white/80 p-4 rounded-lg shadow-lg w-full md:w-1/3"
                   >
-                    <h3 className="text-xl font-semibold text-gray-700 mb- 3">{status}</h3>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-3">{status}</h3>
                     <div className="space-y-4">
                       {filterTasksByStatus(status).map((task, index) => (
-                        <Draggable key={task.Title} draggableId={task.Title} index={index}>
+                        <Draggable 
+                          key={task._id} 
+                          draggableId={task._id} 
+                          index={index}
+                        >
                           {(provided) => (
                             <div
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                             >
-                              <TaskCard task={{_id: task._id, title: task.Title, description: task.Description, dueDate: task.DueDate, priority: task.Priority}} />
+                              <TaskCard 
+                                task={{
+                                  _id: task._id, 
+                                  title: task.Title, 
+                                  description: task.Description, 
+                                  dueDate: task.DueDate, 
+                                  priority: task.Priority
+                                }} 
+                              />
                             </div>
                           )}
                         </Draggable>

@@ -16,7 +16,7 @@ interface TaskCardProps {
 const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString(); // Format the date to a more readable format
+    return new Date(date).toLocaleDateString();
   };
 
   // Helper function to get the priority color
